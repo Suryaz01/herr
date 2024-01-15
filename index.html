@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Website</title>
+</head>
+<body>
+
+<script>
+    const password = prompt("Enter the password:");
+
+    if (password !== "kutti") {
+        alert("Incorrect password. Access denied.");
+        window.location.href = "https://www.google.com"; // Redirect to another site (optional)
+    }
+
+    function submitResponse() {
+        const responseText = document.getElementById("response").value;
+        document.getElementById("displayResponse").innerText = "Your response: " + responseText;
+
+        // Commit the response to the "private-responses" repository
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://api.github.com/repos/suryaz01/private-responses/contents/responses.txt", true);
+        xhr.setRequestHeader("Authorization", "Bearer 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");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 201) {
+                console.log("Response committed successfully.");
+            } else {
+                console.error("Failed to commit response.");
+            }
+        };
+
+        const content = btoa(responseText); // Encode responseText as base64
+        const body = JSON.stringify({
+            message: "Add response",
+            content: content
+        });
+
+        xhr.send(body);
+    }
+</script>
+
+<!-- Your private content goes here -->
+<h1>Welcome to the private area!</h1>
+
+<!-- Form for writing something back -->
+<label for="response">Write something:</label>
+<textarea id="response" name="response" rows="4" cols="50"></textarea><br>
+<button onclick="submitResponse()">Submit</button>
+
+<!-- Display the response dynamically -->
+<p id="displayResponse"></p>
+
+</body>
+</html>
